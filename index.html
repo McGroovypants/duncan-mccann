@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Duncan McCann — Strategic Consultant & Creative Director</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #F5F1E8;
+      --ink:      #1F2A33;
+      --slate:    #5B6770;
+      --brass:    #8C6A3B;
+      --brass-lt: #BFA06A;
+      --white:    #FFFDF7;
+      --rule:     #D9D0BE;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 5vw;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: .04em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--brass); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--slate);
+      font-size: .88rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--brass); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      padding-top: 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+    .hero-text {
+      padding: 8vw 6vw 8vw 8vw;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--brass);
+      border-bottom: 1px solid var(--brass);
+      padding-bottom: 2px;
+      margin-bottom: 1.6rem;
+    }
+    .hero-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.08;
+      color: var(--ink);
+      margin-bottom: 1.4rem;
+    }
+    .hero-heading em {
+      font-style: italic;
+      color: var(--brass);
+    }
+    .hero-sub {
+      font-size: 1.12rem;
+      color: var(--slate);
+      max-width: 460px;
+      margin-bottom: 2.4rem;
+      line-height: 1.75;
+    }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: .75rem 1.8rem;
+      border-radius: 2px;
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--brass);
+      color: var(--white);
+      border: 2px solid var(--brass);
+    }
+    .btn-primary:hover { background: #7A5B32; border-color: #7A5B32; }
+    .btn-outline {
+      background: transparent;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+    }
+    .btn-outline:hover { background: var(--ink); color: var(--white); }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--brass);
+      display: block;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+
+    .hero-image {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hero-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      filter: sepia(15%) contrast(1.05);
+    }
+    .hero-image::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 30%);
+      z-index: 1;
+    }
+    /* Brass corner rule */
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      bottom: 40px; left: 40px;
+      width: 60px; height: 60px;
+      border-left: 3px solid var(--brass);
+      border-bottom: 3px solid var(--brass);
+      z-index: 2;
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 6rem 8vw; }
+    .section-rule {
+      width: 48px; height: 3px;
+      background: var(--brass);
+      margin-bottom: 1rem;
+    }
+    .section-eyebrow {
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: .6rem;
+    }
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+    .section-heading em { font-style: italic; color: var(--brass); }
+    .section-intro {
+      font-size: 1.08rem;
+      color: var(--slate);
+      max-width: 640px;
+      margin-bottom: 3rem;
+    }
+    hr.ornament {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 0;
+      position: relative;
+    }
+    hr.ornament::after {
+      content: '◆';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg);
+      padding: 0 .8rem;
+      color: var(--brass-lt);
+      font-size: .7rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--white); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .about-body p {
+      font-size: 1.08rem;
+      color: var(--slate);
+      margin-bottom: 1.2rem;
+      line-height: 1.8;
+    }
+    .about-body p strong { color: var(--ink); font-weight: 600; }
+    .about-pull {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.5;
+      border-left: 3px solid var(--brass);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+    }
+    .about-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+    .sidebar-block {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      padding: 1.4rem;
+    }
+    .sidebar-block h4 {
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: .8rem;
+      font-weight: 600;
+    }
+    .sidebar-block ul {
+      list-style: none;
+      font-size: .92rem;
+      color: var(--slate);
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+    .sidebar-block ul li::before { content: '— '; color: var(--brass-lt); }
+
+    /* ── SERVICES ── */
+    #services { background: var(--bg); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 2.2rem 1.8rem;
+      position: relative;
+    }
+    .service-card::before {
+      content: '';
+      display: block;
+      width: 32px; height: 2px;
+      background: var(--brass);
+      margin-bottom: 1.2rem;
+    }
+    .service-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: .6rem;
+      color: var(--ink);
+    }
+    .service-card p {
+      font-size: .92rem;
+      color: var(--slate);
+      line-height: 1.65;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--white); }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 8px; bottom: 8px; left: 0;
+      width: 1px;
+      background: var(--rule);
+    }
+    .timeline-item {
+      position: relative;
+      padding: 0 0 3rem 2.5rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 8px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--brass);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 1px var(--brass);
+    }
+    .timeline-date {
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--brass);
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+    .timeline-role {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: .25rem;
+    }
+    .timeline-org {
+      font-size: .92rem;
+      color: var(--brass);
+      font-weight: 600;
+      margin-bottom: .8rem;
+    }
+    .timeline-body {
+      font-size: .94rem;
+      color: var(--slate);
+      line-height: 1.7;
+    }
+    .timeline-body ul {
+      padding-left: 1.2rem;
+      margin-top: .5rem;
+    }
+    .timeline-body ul li { margin-bottom: .3rem; }
+
+    /* ── CLIENTS ── */
+    #clients { background: var(--ink); }
+    #clients .section-heading { color: var(--white); }
+    #clients .section-intro { color: #8FA0AB; }
+    #clients .section-eyebrow { color: var(--brass-lt); }
+    .clients-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+    .client-tag {
+      display: inline-block;
+      padding: .5rem 1.1rem;
+      border: 1px solid #3A4A54;
+      color: #C8D4DA;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      transition: all .2s;
+    }
+    .client-tag:hover {
+      border-color: var(--brass);
+      color: var(--brass-lt);
+    }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--bg); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+    .testimonial-card {
+      background: var(--white);
+      border: 1px solid var(--rule);
+      padding: 2.2rem;
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: var(--brass-lt);
+      opacity: .4;
+      position: absolute;
+      top: .5rem; left: 1.2rem;
+      line-height: 1;
+    }
+    .testimonial-text {
+      font-size: .97rem;
+      color: var(--slate);
+      line-height: 1.75;
+      font-style: italic;
+      margin-bottom: 1.4rem;
+      padding-top: 1.5rem;
+    }
+    .testimonial-author {
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+      border-top: 1px solid var(--rule);
+      padding-top: 1rem;
+    }
+    .testimonial-name {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: .03em;
+    }
+    .testimonial-title {
+      font-size: .82rem;
+      color: var(--brass);
+      font-weight: 500;
+    }
+    .testimonial-category {
+      display: inline-block;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--brass);
+      border: 1px solid var(--brass-lt);
+      padding: .15rem .6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--white); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .contact-info p {
+      font-size: 1.05rem;
+      color: var(--slate);
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .contact-detail-label {
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--brass);
+      font-weight: 600;
+      min-width: 80px;
+    }
+    .contact-detail a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .contact-detail a:hover { color: var(--brass); }
+    .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label {
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--brass);
+      font-weight: 600;
+    }
+    .form-group input,
+    .form-group textarea {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      padding: .8rem 1rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .2s;
+      border-radius: 0;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--brass); }
+    .form-group textarea { min-height: 140px; resize: vertical; }
+    .form-submit {
+      align-self: flex-start;
+      background: var(--brass);
+      color: var(--white);
+      border: none;
+      padding: .85rem 2rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+      border-radius: 0;
+    }
+    .form-submit:hover { background: #7A5B32; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: #8FA0AB;
+      padding: 2.5rem 8vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .84rem;
+    }
+    footer strong {
+      font-family: 'Playfair Display', serif;
+      color: var(--white);
+      font-size: 1rem;
+    }
+    footer a { color: var(--brass-lt); text-decoration: none; }
+    footer a:hover { color: var(--brass); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-image { height: 55vw; }
+      .hero-image::before { background: linear-gradient(to bottom, transparent 60%, var(--bg)); }
+      .about-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">Duncan <span>McCann</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Expertise</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#clients">Clients</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-text">
+    <span class="hero-eyebrow">Strategic Consultant · Creative Director</span>
+    <h1 class="hero-heading">The Secret Sauce.<br><em>Reduced.</em></h1>
+    <p class="hero-sub">Good communication isn't about adding more — it's about cutting to what matters. After 30 years distilling messages for government, business and broadcasters, Duncan McCann brings creative firepower and strategic clarity to every brief.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-primary">Start a Conversation</a>
+      <a href="#about" class="btn btn-outline">About Duncan</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">30+</span>
+        <span class="stat-label">Years Experience</span>
+      </div>
+      <div>
+        <span class="stat-num">Govt</span>
+        <span class="stat-label">& Corporate</span>
+      </div>
+      <div>
+        <span class="stat-num">NZ · AU</span>
+        <span class="stat-label">& Pacific</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="duncan-mccann.png" alt="Duncan McCann" />
+  </div>
+</section>
+
+<hr class="ornament" />
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-eyebrow">About</div>
+  <div class="section-rule"></div>
+  <div class="about-grid">
+    <div class="about-body">
+      <h2 class="section-heading">Clarity is the <em>craft.</em></h2>
+      <p>The secret sauce for any great communication is a creative concept that cuts through the noise — reducing information clutter to the precise essence of what's needed. That's what Duncan McCann has spent 30 years perfecting.</p>
+      <div class="about-pull">"When a company has a rough idea of where they want to go, Duncan gets to know their market implicitly and provides the steps to get their message out there."<br><small style="font-size:.85rem;font-style:normal;color:var(--brass);font-family:'Source Sans 3',sans-serif;">— Andy McGrath, Director, Vision8 Ltd</small></div>
+      <p>As a <strong>writer, director, producer and strategist</strong>, Duncan has worked across the full communications spectrum — from thirty-second TV commercials to major government policy comms, from Tui Award-winning music projects to brand strategy for national corporates.</p>
+      <p>A former <strong>Deputy Mayor of Palmerston North</strong>, he brings rare dual fluency: the creative instincts of an advertising director and the governance intelligence of an elected official. He has successfully delivered strategic communications and production for Business and Government sectors across New Zealand, Australasia and the Pacific.</p>
+      <p>Duncan holds a <strong>Diploma in Creative Writing</strong> (Massey), a <strong>Diploma in Tikanga &amp; Te Reo Māori</strong> (Te Wānanga o Aotearoa) and is an Accredited Resource Management Commissioner. He is a member of PRINZ — the Public Relations Institute of New Zealand.</p>
+    </div>
+    <div class="about-sidebar">
+      <div class="sidebar-block">
+        <h4>What He Does</h4>
+        <ul>
+          <li>Strategic Communications</li>
+          <li>Creative Direction</li>
+          <li>Writing &amp; Scriptwriting</li>
+          <li>Film &amp; Video Production</li>
+          <li>Brand Strategy</li>
+          <li>Stakeholder Engagement</li>
+          <li>Project Management</li>
+          <li>Public Relations</li>
+        </ul>
+      </div>
+      <div class="sidebar-block">
+        <h4>Sectors</h4>
+        <ul>
+          <li>Central &amp; Local Government</li>
+          <li>Corporate &amp; Business</li>
+          <li>Broadcasting &amp; Media</li>
+          <li>Arts &amp; Culture</li>
+          <li>Agriculture &amp; Primary Industry</li>
+          <li>Education</li>
+          <li>Māori &amp; Pacifica</li>
+        </ul>
+      </div>
+      <div class="sidebar-block">
+        <h4>Credentials</h4>
+        <ul>
+          <li>Diploma – Creative Writing, Massey</li>
+          <li>Diploma – Tikanga &amp; Te Reo Māori</li>
+          <li>Accredited RM Commissioner</li>
+          <li>PRINZ Member</li>
+          <li>Diploma of Music &amp; NZ Wine</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="ornament" />
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-eyebrow">Expertise</div>
+  <div class="section-rule"></div>
+  <h2 class="section-heading">What Duncan <em>brings</em></h2>
+  <p class="section-intro">From first brief to final cut — Duncan works across the whole communications chain. Whatever stage you're at, he integrates seamlessly and delivers.</p>
+  <div class="services-grid">
+    <div class="service-card">
+      <h3>Strategic Communications</h3>
+      <p>Communications and marketing plans that align message, audience and medium — built for government frameworks and commercial realities alike.</p>
+    </div>
+    <div class="service-card">
+      <h3>Creative Direction</h3>
+      <p>Concept development, campaign direction and brand positioning. The big idea that makes everything else work harder.</p>
+    </div>
+    <div class="service-card">
+      <h3>Writing &amp; Scriptwriting</h3>
+      <p>TV commercials, corporate video scripts, internal comms, speeches, editorial and brand copy. Words that earn their place.</p>
+    </div>
+    <div class="service-card">
+      <h3>Film &amp; Video Production</h3>
+      <p>Writer, director and producer for broadcast, online and internal media — from docuseries to training videos and shareholder communications.</p>
+    </div>
+    <div class="service-card">
+      <h3>Stakeholder &amp; Government Engagement</h3>
+      <p>Drawing on nine years in elected office, Duncan navigates the intersection of community, council and Crown with fluency and credibility.</p>
+    </div>
+    <div class="service-card">
+      <h3>Project &amp; Account Management</h3>
+      <p>Creative projects delivered on brief and on budget. Experienced in leading specialist teams and managing client relationships from pitch to completion.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="ornament" />
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-eyebrow">Experience</div>
+  <div class="section-rule"></div>
+  <h2 class="section-heading">A career in full <em>colour</em></h2>
+  <p class="section-intro">Three decades across advertising, government, broadcasting and the arts — each chapter adding a new layer of capability.</p>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">2021 – 2022</div>
+      <div class="timeline-role">Creative Advisor — Māori Engagement Strategy</div>
+      <div class="timeline-org">New Zealand Ministry of Foreign Affairs &amp; Trade</div>
+      <div class="timeline-body">
+        Directed and produced <em>Ōhanga Wakarere</em>, a docuseries giving Māori voice on Crown representation. Project managed the Ministry's Māori Engagement Strategy development and produced lectures with prominent Māori leaders.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">2019 – Present</div>
+      <div class="timeline-role">Strategic Communications Consultant</div>
+      <div class="timeline-org">McCann Creative Ltd</div>
+      <div class="timeline-body">
+        Writing, producing and directing comms across a diverse client base including Bell-Booth Ltd, Orillion, Hansells Ltd (Horleys), Auckland City Council / Vision8 Films, Tui Early Learners and the Manawatu Chamber of Commerce.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">2010 – 2019</div>
+      <div class="timeline-role">City Councillor &amp; Deputy Mayor</div>
+      <div class="timeline-org">Palmerston North City Council</div>
+      <div class="timeline-body">
+        <ul>
+          <li>Chairperson, City Planning &amp; Strategy (2016–2019)</li>
+          <li>Technology &amp; Smart City Portfolio Spokesperson</li>
+          <li>Digital &amp; Cultural Transformation steering group leader</li>
+          <li>He Ara Kotahi Cycle Pedestrian Bridge steering group</li>
+          <li>Chairperson, Creative Communities Funding (2010–2019)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">2005 – 2015</div>
+      <div class="timeline-role">Creative Director &amp; Producer</div>
+      <div class="timeline-org">McCann Creative &amp; Afterglow Films Ltd</div>
+      <div class="timeline-body">
+        Marketing and communications consultancy across NZ, Pacifica and Australasia. Clients included Tourism Australia, Sky Sport, Fonterra, Auckland Airport, Les Mills International, Pacific Trade &amp; Investment Commission, Berkeley University and Rattle Records.
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">1993 – 1996</div>
+      <div class="timeline-role">Creative Director</div>
+      <div class="timeline-org">Young &amp; McCann Advertising, Palmerston North</div>
+      <div class="timeline-body">Full-service advertising agency creative direction for regional and national clients.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">1991 – 1993</div>
+      <div class="timeline-role">Creative Apprenticeship &amp; Junior Creative</div>
+      <div class="timeline-org">Colenso &amp; Cole Advertising, Wellington</div>
+      <div class="timeline-body">Foundational training at two of Wellington's leading advertising agencies — where the craft began.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section id="clients">
+  <div class="section-eyebrow">Notable Clients</div>
+  <div class="section-rule" style="background:var(--brass-lt)"></div>
+  <h2 class="section-heading">Trusted by <em>the best</em></h2>
+  <p class="section-intro">A partial list of organisations Duncan has delivered strategic and creative work for across New Zealand, Australia and the Pacific.</p>
+  <div class="clients-grid">
+    <span class="client-tag">NZ Ministry of Foreign Affairs &amp; Trade</span>
+    <span class="client-tag">Tourism Australia</span>
+    <span class="client-tag">Fonterra</span>
+    <span class="client-tag">Auckland Airport</span>
+    <span class="client-tag">Auckland City Council</span>
+    <span class="client-tag">Palmerston North City Council</span>
+    <span class="client-tag">Sky Sport</span>
+    <span class="client-tag">Les Mills International</span>
+    <span class="client-tag">Pacific Trade &amp; Investment Commission</span>
+    <span class="client-tag">Berkeley University</span>
+    <span class="client-tag">Oceania Cruises</span>
+    <span class="client-tag">Electra Energy</span>
+    <span class="client-tag">Bell-Booth Ltd</span>
+    <span class="client-tag">Orillion (Pestoff)</span>
+    <span class="client-tag">Hansells Ltd / Horleys</span>
+    <span class="client-tag">Unichem Pharmacies</span>
+    <span class="client-tag">Rattle Records</span>
+    <span class="client-tag">MUSAC Software</span>
+    <span class="client-tag">Manawatu Chamber of Commerce</span>
+    <span class="client-tag">Bullet Freight Systems</span>
+    <span class="client-tag">Vision8 Films</span>
+    <span class="client-tag">Carncot Independent School</span>
+  </div>
+</section>
+
+<hr class="ornament" style="border-top-color:#3A4A54; background:var(--ink);" />
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-eyebrow">Testimonials</div>
+  <div class="section-rule"></div>
+  <h2 class="section-heading">What clients <em>say</em></h2>
+  <p class="section-intro">From CEOs and composers to producers and principals — the people who've worked with Duncan speak for themselves.</p>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <span class="testimonial-category">Marketing &amp; Creative</span>
+      <p class="testimonial-text">"Duncan's ability to big-picture a project has been a valuable asset to Bell-Booth. His designs won us Best Site Award at the National Fieldays in Mystery Creek… twice! Considering how much the big players spend and how many exhibitors there are, it's pretty exceptional. Duncan is good fun to work with, he's smart, savvy and uncomplicated."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">Stephen Bell-Booth</span>
+        <span class="testimonial-title">CEO, Bell-Booth Ltd</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="testimonial-category">Brand &amp; Communications</span>
+      <p class="testimonial-text">"You took time to understand us as a client, you connected very quickly with our business and you show a real passion for and pleasure in seeing us succeed. I appreciate the in-depth research you did nationally and globally to give us something fresh and different. I would be very happy to give you the highest recommendation."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">Christine Michalski</span>
+        <span class="testimonial-title">Principal, Carncot Independent School for Girls</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="testimonial-category">Fundraising &amp; Sponsorship</span>
+      <p class="testimonial-text">"Duncan's achievements in conceiving and coordinating the strategy whereby over a quarter of a million dollars of support was generated is nothing short of miraculous. He demonstrated an incredibly highly developed skill set that offered the kind of creative vision and project management that is of strategic value to the entire arts sector."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">John Psathas</span>
+        <span class="testimonial-title">Composer / Professor, NZ School of Music</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="testimonial-category">Television &amp; Broadcasting</span>
+      <p class="testimonial-text">"When Bullet Freight launched our overnight delivery service Duncan did a fantastic job writing and producing a quality TV commercial that has become the cornerstone of our marketing for the last decade. It accounts for about 80% of our customer enquiries. When it's on television, our web hits increase from 16,000 to 43,000 per month."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">Dean Ruscoe</span>
+        <span class="testimonial-title">CEO, Bullet Freight Systems Ltd</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="testimonial-category">Film Production</span>
+      <p class="testimonial-text">"Duncan has always provided an extremely professional and reliable service. He has the ability to make people feel relaxed and comfortable on camera. His depth of knowledge and experience in the media makes him the perfect person to step in and provide a seamless expertise in what is a very specialised area."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">Mark Leishman</span>
+        <span class="testimonial-title">Executive Producer, Dexterity Productions</span>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <span class="testimonial-category">Strategy &amp; Direction</span>
+      <p class="testimonial-text">"When a company has a rough idea of where they want to go, Duncan gets to know their market implicitly and provides the steps to get their message out there. Our clients have come to know him as part of our team and an integral factor in setting the Waka heading in the right direction. Duncan can be relied upon to deliver on any project, no matter how large."</p>
+      <div class="testimonial-author">
+        <span class="testimonial-name">Andy McGrath</span>
+        <span class="testimonial-title">Director, Vision8 Ltd</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="ornament" />
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-eyebrow">Contact</div>
+  <div class="section-rule"></div>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <h2 class="section-heading">Let's reduce <em>something.</em></h2>
+      <p>Whether you have a brief, a vague idea, or just a communication problem you can't quite articulate — Duncan is the person who will help you find the essence of it. Get in touch.</p>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Email</span>
+        <a href="mailto:mccanncreative@me.com">mccanncreative@me.com</a>
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Mobile</span>
+        <a href="tel:+64210357704">021 357 704</a>
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/duncan-mccann-27b34912/" target="_blank">Duncan McCann</a>
+      </div>
+      <div class="contact-detail">
+        <span class="contact-detail-label">Based</span>
+        <span style="color:var(--slate)">Palmerston North, New Zealand</span>
+      </div>
+    </div>
+    <div>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" placeholder="Jane Smith" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="jane@company.co.nz" required />
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" placeholder="Project brief / enquiry" />
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="Tell Duncan what you're working on…" required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <strong>Duncan McCann</strong><br>
+    Strategic Consultant &amp; Creative Director
+  </div>
+  <div style="text-align:center; font-size:.8rem; opacity:.6;">
+    © 2025 McCann Creative Ltd · New Zealand
+  </div>
+  <div style="text-align:right;">
+    <a href="mailto:mccanncreative@me.com">mccanncreative@me.com</a><br>
+    <a href="https://www.linkedin.com/in/duncan-mccann-27b34912/" target="_blank" style="font-size:.8rem;">LinkedIn Profile</a>
+  </div>
+</footer>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Message Sent ✓';
+    btn.style.background = '#5B7A4A';
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+      e.target.reset();
+    }, 3000);
+  }
+
+  // Smooth active nav highlighting
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--brass)' : '';
+    });
+  });
+</script>
+</body>
+</html>
