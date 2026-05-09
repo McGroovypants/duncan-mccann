@@ -512,8 +512,8 @@ body.col-resizing iframe { pointer-events: none; }
 // ==========================================
 // CONFIG
 // ==========================================
-const ACCESS_CODE_HASH = 'ad1454c7b344ab6c524d0164f993e110f18ab9e9b13bd6f96667875fa335f6e9';
-const ENCRYPTED_PAT = '+OUr1G4Q+xWd0Frh2DYqaGYLXxCaD7raV1sdskTH9T6/MZrpZxl8ArSYcWF4JZayLJUI0pQ5QFejkE+JC4ccodFdKzP8Bktjovwt+h8EgZvNgy9f';
+const ACCESS_CODE_HASH = 'f99acf0dc1b902b0ef7437f2c94acaad0f356678055fe1a585336f6c5ab8948f';
+const ENCRYPTED_PAT = 'qGS4sH5RmcdMAAj+x7gBWWsCU5QtHLoMME3ln0ecLYOoTwdH64toabomf75EI4sLetwxDjwSy0Sk1Px1NbB5AcXAmBFxON5UyYLZeKTrq8pZQkCs';
 
 async function decryptPat(accessCode) {
   const blob = Uint8Array.from(atob(ENCRYPTED_PAT), c => c.charCodeAt(0));
