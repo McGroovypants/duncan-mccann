@@ -447,6 +447,149 @@ body.col-resizing iframe { pointer-events: none; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Add Media button */
+.add-media-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: transparent;
+  border: 2px dashed var(--gold);
+  border-radius: var(--radius);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.add-media-btn:hover {
+  background: rgba(212,168,83,0.1);
+}
+
+/* Added media items in editor */
+.added-media-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+.added-media-item img {
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.added-media-item .ami-details {
+  flex: 1;
+  min-width: 0;
+}
+.added-media-item .ami-dims {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.added-media-item .ami-dims .ami-size-class {
+  color: var(--gold);
+  font-weight: 600;
+}
+.added-media-item .ami-warning {
+  font-size: 11px;
+  color: #ff6b6b;
+  margin-bottom: 4px;
+}
+.added-media-item input {
+  width: 100%;
+  padding: 5px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+}
+.added-media-item input:focus { border-color: var(--gold); }
+.ami-remove {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.ami-remove:hover { opacity: 0.7; }
+.ami-layout-hint {
+  font-size: 11px;
+  color: var(--gold);
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+/* Resolution warning modal */
+.res-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,41,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.res-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+}
+.res-modal h3 {
+  color: #ff6b6b;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.res-modal p {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.res-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.res-modal-buttons button {
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.res-modal-buttons .btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+}
+.res-modal-buttons .btn-primary:hover { background: var(--gold-dim); }
+.res-modal-buttons .btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.res-modal-buttons .btn-secondary:hover { border-color: var(--text-dim); }
 </style>
 </head>
 <body>
@@ -507,6 +650,20 @@ body.col-resizing iframe { pointer-events: none; }
 </div>
 
 <input type="file" id="fileChooser" accept="image/*" style="display:none">
+<input type="file" id="addMediaChooser" accept="image/*" multiple style="display:none">
+
+<!-- Resolution Warning Modal -->
+<div id="resWarningModal" class="res-modal-overlay" style="display:none">
+  <div class="res-modal">
+    <h3>⚠ Image Resolution Warning</h3>
+    <p id="resWarningText"></p>
+    <div class="res-modal-buttons">
+      <button class="btn-primary" onclick="resModalAction('upload')">Upload Larger Version</button>
+      <button class="btn-secondary" onclick="resModalAction('grid')">Add to Grid Instead</button>
+      <button class="btn-secondary" onclick="resModalAction('anyway')">Add Anyway</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ==========================================
@@ -750,6 +907,7 @@ function parseHtml(html) {
         tag,
         textElements,
         imageElements,
+        addedMedia: [],
         outerSelector: buildSelector(el)
       });
     }
@@ -837,9 +995,10 @@ function renderSections() {
       renderEditor();
     };
 
+    const addedCount = section.addedMedia ? section.addedMedia.length : 0;
     let html = `<div>
       <div class="name">${escapeHtml(section.name)}</div>
-      <div class="meta">${section.textElements.length}T ${section.imageElements.length}I</div>
+      <div class="meta">${section.textElements.length}T ${section.imageElements.length}I${addedCount > 0 ? ' +' + addedCount + 'M' : ''}</div>
     </div>`;
     if (changes > 0) {
       html += `<span class="badge">${changes}</span>`;
@@ -857,6 +1016,9 @@ function countSectionChanges(section) {
   section.imageElements.forEach(ie => {
     if (ie.src !== ie.originalSrc || ie.alt !== ie.originalAlt || ie.newFileBase64) count++;
   });
+  if (section.addedMedia && section.addedMedia.length > 0) {
+    count += section.addedMedia.length;
+  }
   return count;
 }
 
@@ -917,6 +1079,40 @@ function renderEditor() {
       ${changed ? `<button class="reset-btn" onclick="resetElement('${section.id}','${ie.id}','image')">Reset</button>` : ''}
     </div>`;
   });
+
+  // Added media items
+  if (section.addedMedia && section.addedMedia.length > 0) {
+    html += `<div class="element-group changed">
+      <div class="el-label">
+        <span class="el-tag">Added Media</span>
+        <span class="el-changed">${section.addedMedia.length} new</span>
+      </div>`;
+
+    section.addedMedia.forEach((am, i) => {
+      const sizeLabel = am.sizeClass === 'full' ? 'Full width' :
+                        am.sizeClass === 'half' ? 'Half width' :
+                        am.sizeClass === 'third' ? 'Third width' : 'Small';
+      const isSmall = am.sizeClass === 'small';
+      html += `<div class="added-media-item">
+        <img src="data:image/jpeg;base64,${am.base64}" alt="">
+        <div class="ami-details">
+          <div class="ami-dims">${am.width} × ${am.height} — <span class="ami-size-class">${sizeLabel}</span></div>
+          ${isSmall ? '<div class="ami-warning">⚠ Low resolution — consider a larger image or adding more to create a grid</div>' : ''}
+          <input type="text" value="${escapeAttr(am.alt)}" placeholder="Alt text"
+            oninput="handleAddedMediaAlt('${section.id}','${am.id}',this.value)">
+        </div>
+        <button class="ami-remove" onclick="removeAddedMedia('${section.id}','${am.id}')" title="Remove">×</button>
+      </div>`;
+    });
+
+    // Layout hint
+    const layoutHint = getLayoutHint(section.addedMedia);
+    html += `<div class="ami-layout-hint">Will display as: ${layoutHint}</div>`;
+    html += `</div>`;
+  }
+
+  // Add Media button
+  html += `<button class="add-media-btn" onclick="startAddMedia('${section.id}')">+ Add Media</button>`;
 
   col.innerHTML = html;
 }
@@ -1073,6 +1269,50 @@ async function deploySite() {
       });
     });
 
+    // Add media to sections
+    state.sections.forEach(section => {
+      if (!section.addedMedia || section.addedMedia.length === 0) return;
+      try {
+        const sectionEl = doc.querySelector(section.outerSelector);
+        if (!sectionEl) return;
+
+        const count = section.addedMedia.length;
+        const container = doc.createElement('div');
+        container.className = 'added-media';
+
+        if (count === 1 && (section.addedMedia[0].sizeClass === 'full' || count === 1)) {
+          container.setAttribute('style', 'margin-top:2rem;');
+          const img = doc.createElement('img');
+          img.setAttribute('src', 'assets/' + section.addedMedia[0].fileName);
+          img.setAttribute('alt', section.addedMedia[0].alt || '');
+          img.setAttribute('style', 'width:100%;border-radius:8px;');
+          container.appendChild(img);
+        } else if (count === 2) {
+          container.setAttribute('style', 'display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;');
+          section.addedMedia.forEach(am => {
+            const img = doc.createElement('img');
+            img.setAttribute('src', 'assets/' + am.fileName);
+            img.setAttribute('alt', am.alt || '');
+            img.setAttribute('style', 'width:100%;border-radius:8px;object-fit:cover;aspect-ratio:4/3;');
+            container.appendChild(img);
+          });
+        } else {
+          container.setAttribute('style', 'display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;');
+          section.addedMedia.forEach(am => {
+            const img = doc.createElement('img');
+            img.setAttribute('src', 'assets/' + am.fileName);
+            img.setAttribute('alt', am.alt || '');
+            img.setAttribute('style', 'width:100%;border-radius:8px;object-fit:cover;aspect-ratio:4/3;');
+            container.appendChild(img);
+          });
+        }
+
+        sectionEl.appendChild(container);
+      } catch (e) {
+        console.warn('Failed to add media to section:', section.id, e);
+      }
+    });
+
     // Serialize back to HTML string
     // Use the doctype + full html to preserve original structure
     const serializer = new XMLSerializer();
@@ -1084,7 +1324,7 @@ async function deploySite() {
     state.fileSha = result.content.sha;
     state.originalHtml = newHtml;
 
-    // Push any new image files
+    // Push any new image files (swapped)
     const newImages = [];
     state.sections.forEach(s => {
       s.imageElements.forEach(ie => {
@@ -1094,10 +1334,31 @@ async function deploySite() {
       });
     });
 
+    // Also collect added media images
+    const addedMediaImages = [];
+    state.sections.forEach(s => {
+      if (s.addedMedia) {
+        s.addedMedia.forEach(am => {
+          addedMediaImages.push(am);
+        });
+      }
+    });
+
+    const totalImages = newImages.length + addedMediaImages.length;
+    let imgIdx = 0;
+
     for (let i = 0; i < newImages.length; i++) {
       const ie = newImages[i];
-      showLoading(`Uploading image ${i + 1}/${newImages.length}...`);
+      imgIdx++;
+      showLoading(`Uploading image ${imgIdx}/${totalImages}...`);
       await pushBinaryFile(`assets/${ie.newFileName}`, ie.newFileBase64, `Add image: ${ie.newFileName}`);
+    }
+
+    for (let i = 0; i < addedMediaImages.length; i++) {
+      const am = addedMediaImages[i];
+      imgIdx++;
+      showLoading(`Uploading image ${imgIdx}/${totalImages}...`);
+      await pushBinaryFile(`assets/${am.fileName}`, am.base64, `Add media: ${am.fileName}`);
     }
 
     // Reset change tracking
@@ -1112,6 +1373,7 @@ async function deploySite() {
         ie.newFileBase64 = null;
         ie.newFileName = null;
       });
+      s.addedMedia = [];
     });
 
     btn.textContent = 'Deployed!';
@@ -1147,6 +1409,175 @@ async function deploySite() {
 
 function backToSetup() {
   show('setup');
+}
+
+// ==========================================
+// ADD MEDIA
+// ==========================================
+let addMediaState = {
+  targetSectionId: null,
+  pendingSmallImages: [], // images awaiting resolution decision
+  resolvingIndex: 0
+};
+
+function getSizeClass(width) {
+  if (width >= 1200) return 'full';
+  if (width >= 600) return 'half';
+  if (width >= 400) return 'third';
+  return 'small';
+}
+
+function getLayoutHint(addedMedia) {
+  if (!addedMedia || addedMedia.length === 0) return 'None';
+  const count = addedMedia.length;
+  if (count === 1) {
+    const sc = addedMedia[0].sizeClass;
+    if (sc === 'full') return 'Full width';
+    return 'Single image';
+  }
+  if (count === 2) return '2-column grid';
+  return '3-column grid';
+}
+
+function startAddMedia(sectionId) {
+  addMediaState.targetSectionId = sectionId;
+  document.getElementById('addMediaChooser').click();
+}
+
+document.getElementById('addMediaChooser').addEventListener('change', function(e) {
+  if (!e.target.files.length || !addMediaState.targetSectionId) return;
+  const files = Array.from(e.target.files);
+  const sectionId = addMediaState.targetSectionId;
+  const section = state.sections.find(s => s.id === sectionId);
+  if (!section) return;
+
+  let processed = 0;
+  const toResolve = [];
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const base64 = ev.target.result.split(',')[1];
+      const img = new Image();
+      img.onload = function() {
+        const w = img.naturalWidth;
+        const h = img.naturalHeight;
+        const sizeClass = getSizeClass(w);
+        const mediaItem = {
+          id: 'added-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
+          base64: base64,
+          fileName: file.name.toLowerCase().replace(/\s+/g, '-'),
+          width: w,
+          height: h,
+          alt: '',
+          sizeClass: sizeClass
+        };
+
+        if (sizeClass === 'small') {
+          toResolve.push(mediaItem);
+        } else {
+          section.addedMedia.push(mediaItem);
+        }
+
+        processed++;
+        if (processed === files.length) {
+          // All files processed
+          if (toResolve.length > 0) {
+            addMediaState.pendingSmallImages = toResolve;
+            addMediaState.resolvingIndex = 0;
+            showResWarning(toResolve[0]);
+          } else {
+            renderEditor();
+            renderSections();
+            updateChangeCount();
+          }
+        }
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  e.target.value = '';
+});
+
+function showResWarning(mediaItem) {
+  const modal = document.getElementById('resWarningModal');
+  const text = document.getElementById('resWarningText');
+  text.textContent = `This image is only ${mediaItem.width}px wide. For the best display, we recommend at least 400px wide (ideally 1200px+ for full-width display).`;
+  modal.style.display = 'flex';
+}
+
+function resModalAction(action) {
+  const modal = document.getElementById('resWarningModal');
+  const pending = addMediaState.pendingSmallImages;
+  const current = pending[addMediaState.resolvingIndex];
+  const section = state.sections.find(s => s.id === addMediaState.targetSectionId);
+
+  if (action === 'upload') {
+    // Remove this item, re-open file chooser for replacement
+    pending.splice(addMediaState.resolvingIndex, 1);
+    modal.style.display = 'none';
+    // Re-open chooser
+    document.getElementById('addMediaChooser').click();
+    return;
+  }
+
+  if (action === 'grid') {
+    // Add it and prompt for more
+    if (section) section.addedMedia.push(current);
+    advanceResModal();
+    // After resolving all, open chooser for more
+    if (addMediaState.resolvingIndex >= pending.length) {
+      renderEditor();
+      renderSections();
+      updateChangeCount();
+      // Open chooser for more images
+      setTimeout(() => {
+        document.getElementById('addMediaChooser').click();
+      }, 100);
+    }
+    return;
+  }
+
+  if (action === 'anyway') {
+    // Add it with warning
+    if (section) section.addedMedia.push(current);
+    advanceResModal();
+    return;
+  }
+}
+
+function advanceResModal() {
+  const modal = document.getElementById('resWarningModal');
+  const pending = addMediaState.pendingSmallImages;
+  addMediaState.resolvingIndex++;
+
+  if (addMediaState.resolvingIndex < pending.length) {
+    showResWarning(pending[addMediaState.resolvingIndex]);
+  } else {
+    modal.style.display = 'none';
+    addMediaState.pendingSmallImages = [];
+    renderEditor();
+    renderSections();
+    updateChangeCount();
+  }
+}
+
+function handleAddedMediaAlt(sectionId, mediaId, value) {
+  const section = state.sections.find(s => s.id === sectionId);
+  if (!section) return;
+  const am = section.addedMedia.find(m => m.id === mediaId);
+  if (am) am.alt = value;
+}
+
+function removeAddedMedia(sectionId, mediaId) {
+  const section = state.sections.find(s => s.id === sectionId);
+  if (!section) return;
+  section.addedMedia = section.addedMedia.filter(m => m.id !== mediaId);
+  renderEditor();
+  renderSections();
+  updateChangeCount();
 }
 
 // ==========================================
