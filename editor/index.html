@@ -518,6 +518,19 @@ body.col-resizing iframe { pointer-events: none; }
   outline: none;
 }
 .added-media-item input:focus { border-color: var(--gold); }
+.added-media-item select {
+  padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 4px;
+}
+.added-media-item select:focus { border-color: var(--gold); }
 .ami-remove {
   background: none;
   border: none;
@@ -1089,15 +1102,17 @@ function renderEditor() {
       </div>`;
 
     section.addedMedia.forEach((am, i) => {
-      const sizeLabel = am.sizeClass === 'full' ? 'Full width' :
-                        am.sizeClass === 'half' ? 'Half width' :
-                        am.sizeClass === 'third' ? 'Third width' : 'Small';
-      const isSmall = am.sizeClass === 'small';
+      const dw = am.displayWidth || 100;
+      const minPx = Math.round(dw * 12); // rough: 1200px at 100%, 600px at 50%, etc.
+      const tooSmall = am.width < minPx;
       html += `<div class="added-media-item">
         <img src="data:image/jpeg;base64,${am.base64}" alt="">
         <div class="ami-details">
-          <div class="ami-dims">${am.width} × ${am.height} — <span class="ami-size-class">${sizeLabel}</span></div>
-          ${isSmall ? '<div class="ami-warning">⚠ Low resolution — consider a larger image or adding more to create a grid</div>' : ''}
+          <div class="ami-dims">${am.width} × ${am.height}</div>
+          <select onchange="handleAddedMediaWidth('${section.id}','${am.id}',this.value)">
+            ${[100,75,66,55,50,33,25].map(w => `<option value="${w}"${w === dw ? ' selected' : ''}>${w}% width</option>`).join('')}
+          </select>
+          ${tooSmall ? `<div class="ami-warning">⚠ Image may appear soft at ${dw}% — only ${am.width}px wide (recommend ${minPx}px+)</div>` : ''}
           <input type="text" value="${escapeAttr(am.alt)}" placeholder="Alt text"
             oninput="handleAddedMediaAlt('${section.id}','${am.id}',this.value)">
         </div>
@@ -1106,8 +1121,10 @@ function renderEditor() {
     });
 
     // Layout hint
-    const layoutHint = getLayoutHint(section.addedMedia);
-    html += `<div class="ami-layout-hint">Will display as: ${layoutHint}</div>`;
+    const totalWidth = section.addedMedia.reduce((sum, am) => sum + (am.displayWidth || 100), 0);
+    const layoutHint = section.addedMedia.map(am => `${am.displayWidth || 100}%`).join(' + ');
+    const wrapNote = totalWidth > 100 ? ' (will wrap to next row)' : '';
+    html += `<div class="ami-layout-hint">Layout: ${layoutHint}${wrapNote}</div>`;
     html += `</div>`;
   }
 
@@ -1276,36 +1293,26 @@ async function deploySite() {
         const sectionEl = doc.querySelector(section.outerSelector);
         if (!sectionEl) return;
 
-        const count = section.addedMedia.length;
         const container = doc.createElement('div');
         container.className = 'added-media';
+        container.setAttribute('style', 'display:flex;flex-wrap:wrap;gap:1rem;margin-top:2rem;');
 
-        if (count === 1 && (section.addedMedia[0].sizeClass === 'full' || count === 1)) {
-          container.setAttribute('style', 'margin-top:2rem;');
+        section.addedMedia.forEach(am => {
+          const dw = am.displayWidth || 100;
+          const wrapper = doc.createElement('div');
+          // Subtract gap: use calc to account for flex gap
+          if (dw === 100) {
+            wrapper.setAttribute('style', 'width:100%;');
+          } else {
+            wrapper.setAttribute('style', `flex:0 0 calc(${dw}% - 0.5rem);max-width:calc(${dw}% - 0.5rem);`);
+          }
           const img = doc.createElement('img');
-          img.setAttribute('src', 'assets/' + section.addedMedia[0].fileName);
-          img.setAttribute('alt', section.addedMedia[0].alt || '');
-          img.setAttribute('style', 'width:100%;border-radius:8px;');
-          container.appendChild(img);
-        } else if (count === 2) {
-          container.setAttribute('style', 'display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;');
-          section.addedMedia.forEach(am => {
-            const img = doc.createElement('img');
-            img.setAttribute('src', 'assets/' + am.fileName);
-            img.setAttribute('alt', am.alt || '');
-            img.setAttribute('style', 'width:100%;border-radius:8px;object-fit:cover;aspect-ratio:4/3;');
-            container.appendChild(img);
-          });
-        } else {
-          container.setAttribute('style', 'display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;');
-          section.addedMedia.forEach(am => {
-            const img = doc.createElement('img');
-            img.setAttribute('src', 'assets/' + am.fileName);
-            img.setAttribute('alt', am.alt || '');
-            img.setAttribute('style', 'width:100%;border-radius:8px;object-fit:cover;aspect-ratio:4/3;');
-            container.appendChild(img);
-          });
-        }
+          img.setAttribute('src', 'assets/' + am.fileName);
+          img.setAttribute('alt', am.alt || '');
+          img.setAttribute('style', 'width:100%;border-radius:8px;object-fit:cover;');
+          wrapper.appendChild(img);
+          container.appendChild(wrapper);
+        });
 
         sectionEl.appendChild(container);
       } catch (e) {
@@ -1429,14 +1436,7 @@ function getSizeClass(width) {
 
 function getLayoutHint(addedMedia) {
   if (!addedMedia || addedMedia.length === 0) return 'None';
-  const count = addedMedia.length;
-  if (count === 1) {
-    const sc = addedMedia[0].sizeClass;
-    if (sc === 'full') return 'Full width';
-    return 'Single image';
-  }
-  if (count === 2) return '2-column grid';
-  return '3-column grid';
+  return addedMedia.map(am => `${am.displayWidth || 100}%`).join(' + ');
 }
 
 function startAddMedia(sectionId) {
@@ -1463,6 +1463,8 @@ document.getElementById('addMediaChooser').addEventListener('change', function(e
         const w = img.naturalWidth;
         const h = img.naturalHeight;
         const sizeClass = getSizeClass(w);
+        // Default display width based on resolution
+        const defaultWidth = w >= 1200 ? 100 : w >= 600 ? 50 : w >= 400 ? 33 : 25;
         const mediaItem = {
           id: 'added-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
           base64: base64,
@@ -1470,7 +1472,8 @@ document.getElementById('addMediaChooser').addEventListener('change', function(e
           width: w,
           height: h,
           alt: '',
-          sizeClass: sizeClass
+          sizeClass: sizeClass,
+          displayWidth: defaultWidth
         };
 
         if (sizeClass === 'small') {
@@ -1524,7 +1527,8 @@ function resModalAction(action) {
   }
 
   if (action === 'grid') {
-    // Add it and prompt for more
+    // Add at 33% width and prompt for more
+    current.displayWidth = 33;
     if (section) section.addedMedia.push(current);
     advanceResModal();
     // After resolving all, open chooser for more
@@ -1532,7 +1536,6 @@ function resModalAction(action) {
       renderEditor();
       renderSections();
       updateChangeCount();
-      // Open chooser for more images
       setTimeout(() => {
         document.getElementById('addMediaChooser').click();
       }, 100);
@@ -1541,7 +1544,8 @@ function resModalAction(action) {
   }
 
   if (action === 'anyway') {
-    // Add it with warning
+    // Add at 25% width with warning
+    current.displayWidth = 25;
     if (section) section.addedMedia.push(current);
     advanceResModal();
     return;
@@ -1558,6 +1562,18 @@ function advanceResModal() {
   } else {
     modal.style.display = 'none';
     addMediaState.pendingSmallImages = [];
+    renderEditor();
+    renderSections();
+    updateChangeCount();
+  }
+}
+
+function handleAddedMediaWidth(sectionId, mediaId, value) {
+  const section = state.sections.find(s => s.id === sectionId);
+  if (!section) return;
+  const am = section.addedMedia.find(m => m.id === mediaId);
+  if (am) {
+    am.displayWidth = parseInt(value, 10);
     renderEditor();
     renderSections();
     updateChangeCount();
